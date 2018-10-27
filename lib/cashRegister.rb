@@ -1,14 +1,14 @@
 class CashRegister
 
-  Cash_Dictionary =  [["OneHundred ", 100.00],
-                      ["Twenty ", 20.00],
-                      ["Ten ", 10.00],
-                      ["Five ", 5.00],
-                      ["One ", 1.00],
-                      ["Quarter ", 0.25],
-                      ["Dime ", 0.10],
-                      ["Nickel ", 0.05],
-                      ["Penny ", 0.01 ]].freeze
+  Cash_Dictionary =  [["ONEHUNDRED ", 100.00],
+                      ["TWENTY ", 20.00],
+                      ["TEN ", 10.00],
+                      ["FIVE ", 5.00],
+                      ["ONE ", 1.00],
+                      ["QUARTER ", 0.25],
+                      ["DIME ", 0.10],
+                      ["NICKEL ", 0.05],
+                      ["PENNY ", 0.01 ]].freeze
 
   def self.checkCashRegister(price, cash, cashInDrawer)
     changeFromPurchase = cash - price
@@ -33,16 +33,16 @@ class CashRegister
     (cashOnHand - itemPrice).round(2)
   end
 
-  def self.GetChange(calculate)
-    output = []
-    cal = calculate
-    Cash_Dictionary.each do |nameOfNumber,number|
-      while (cal >= number)
-        (output <<  number) && (output << nameOfNumber)
-        (cal -= number)
-      end
-    end
-    output
-  end
+  def self.GetChange(cal)
+   output = {}
+   Cash_Dictionary.each do |nameOfNumber,number|
+     while (cal >= number)
+       output[nameOfNumber] ||= 0
+       (output[nameOfNumber] += number)
+       (cal -= number)
+     end
+   end
+   output.to_a
+ end
 
 end
