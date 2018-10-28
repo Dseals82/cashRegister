@@ -24,10 +24,10 @@ RSpec.describe 'CountCashRegister' do
   describe 'getChange' do
     context 'converts change to appropriate output' do
       it 'should return correct output' do
-        expect(CashRegister.GetChange(100.25)).to eq([100.0, "OneHundred ", 0.25, "Quarter "])
+        expect(CashRegister.GetChange(100.25)).to eq( [["ONEHUNDRED ", 100.0], ["QUARTER ", 0.25]] )
       end
       it 'should return correct output' do
-        expect(CashRegister.GetChange(200.53)).to eq( [100.0, "OneHundred ", 100.0, "OneHundred ", 0.25, "Quarter ", 0.25, "Quarter ", 0.01, "Penny ", 0.01, "Penny ", 0.01, "Penny "])
+        expect(CashRegister.GetChange(200.53)).to eq( [["ONEHUNDRED ", 200.0], ["QUARTER ", 0.5], ["PENNY ", 0.03]] )
       end
     end
   end
@@ -41,13 +41,13 @@ RSpec.describe 'CountCashRegister' do
         expect(CashRegister.checkCashRegister(19.50, 19.51, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])).to eq('Closed')
       end
       it "should return amount if change available is greater than change due" do
-        expect(CashRegister.checkCashRegister(19.50, 20.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq([0.25, "Quarter ", 0.25, "Quarter "])
+        expect(CashRegister.checkCashRegister(19.50, 20.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq( [["QUARTER ", 0.5]] )
       end
       it "should return amount if change available is greater than change due" do
-        expect(CashRegister.checkCashRegister(20.50, 50.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq( [20.0, "Twenty ", 5.0, "Five ", 1.0, "One ", 1.0, "One ", 1.0, "One ", 1.0, "One ", 0.25, "Quarter ", 0.25, "Quarter "])
+        expect(CashRegister.checkCashRegister(20.50, 50.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq( [["TWENTY ", 20.0], ["FIVE ", 5.0], ["ONE ", 4.0], ["QUARTER ", 0.5]] )
       end
       it "should correct change when paying one hundred for three dollars and twenty six cents" do
-        expect(CashRegister.checkCashRegister(3.26, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]])).to eq([["TWENTY", 60], ["TEN", 20], ["FIVE", 15], ["ONE", 1], ["QUARTER", 0.5], ["DIME", 0.2], ["PENNY", 0.04]])
+        expect(CashRegister.checkCashRegister(3.26, 100.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq([["TWENTY", 60], ["TEN", 20], ["FIVE", 15], ["ONE", 1], ["QUARTER", 0.5], ["DIME", 0.2], ["PENNY", 0.04]])
       end
     end
   end
