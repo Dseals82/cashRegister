@@ -34,15 +34,13 @@ class CashRegister
   end
 
   def self.GetChange(cal)
-   output = {}
-   Cash_Dictionary.each do |nameOfNumber,number|
-     while (cal >= number)
-       output[nameOfNumber] ||= 0
-       (output[nameOfNumber] += number)
-       (cal -= number)
-     end
-   end
-   output.to_a
- end
+    Cash_Dictionary.each_with_object({}) do |(name, number), output|
+      while (cal >= number)
+        output[name] ||= 0
+        (output[name] += number)
+        (cal -= number)
+      end
+    end.to_a
+  end
 
 end
