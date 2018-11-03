@@ -1,10 +1,10 @@
 class CashRegister
 
-  Cash_Dictionary =  [["ONEHUNDRED ", 100.00],
-                      ["TWENTY ", 20.00],
-                      ["TEN ", 10.00],
-                      ["FIVE ", 5.00],
-                      ["ONE ", 1.00],
+  Cash_Dictionary =  [["ONEHUNDRED ", 100],
+                      ["TWENTY ", 20],
+                      ["TEN ", 10],
+                      ["FIVE ", 5],
+                      ["ONE ", 1],
                       ["QUARTER ", 0.25],
                       ["DIME ", 0.10],
                       ["NICKEL ", 0.05],
@@ -20,27 +20,65 @@ class CashRegister
 
   private
 
-  def self.CountCashRegister(price, cash, cashInDrawer)
-    @customersChange = ChangeNeeded(price, cash, cashInDrawer)
-    @changeAvailable = TotalCashRegisterSum(price, cash, cashInDrawer)
-  end
-
   def self.TotalCashRegisterSum(price, cash, cashInDrawer)
-    cashInDrawer.inject(0){|sum,num| sum + num[1]}.round(2)
+    cashInDrawer.inject(0){|sum,(name, number)| sum + number}.round(2)
   end
 
   def self.ChangeNeeded(itemPrice,cashOnHand,cashInDrawer)
     (cashOnHand - itemPrice).round(2)
   end
 
-  def self.GetChange(cal)
-    Cash_Dictionary.each_with_object({}) do |(name, number), output|
-      while (cal >= number)
-        output[name] ||= 0
-        (output[name] += number)
+  # def self.GetChange(cal)
+  #   val = 0
+  #   Cash_Dictionary.each_with_object({}) do |(name, number), output|
+  #       (cal / number).to_i.times do
+  #       (output[name] ||= 0)
+  #       (output[name] += number)
+  #       (cal -= number)
+  #     end
+  #   end.to_a
+  # end
+  #
+  # def self.GetChange(cal)
+  #   return_amount = []
+  #   total = 0
+  #   Cash_Dictionary.each do |k, v|
+  #     while cal >= v
+  #       return_amount <<  v * (cal / v)
+  #       cal -= v * (cal / v)
+  #     end
+  #
+  #   end
+  #   return_amount
+  # end
+
+  # def self.GetChange(cal)
+  #   return_amount = []
+  #   total = 0
+  #   Cash_Dictionary.sort.reverse.each do |k, v|
+  #     while cal >= v
+  #       amount = v * (cal / v)
+  #       return_amount << amount
+  #       cal -= v * (cal / v)
+  #     end
+  #   end
+  #   return_amount.to_a
+  # end
+
+
+
+  def self.GetChange(calculate)
+    output = {}
+    cal = calculate
+    Cash_Dictionary.map do |nameOfNumber, number|
+       while cal >= number
+        (output[nameOfNumber] ||= 0)
+        (output[nameOfNumber] += number)
         (cal -= number)
       end
-    end.to_a
+    end
+    output.to_a
   end
+
 
 end
