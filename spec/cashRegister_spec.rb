@@ -1,56 +1,49 @@
 require_relative '../lib/cashRegister'
 
 RSpec.describe 'TotalCashRegisterSum' do
-  it "should total up some in cash register to be $335.41" do
-    expect(CashRegister.TotalCashRegisterSum(0.00, 0.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq(335.41)
-  end
-  it "should total up some in cash register to be 735.4" do
-    expect(CashRegister.TotalCashRegisterSum(0.00, 0.00, [["PENNY", 1.05], ["NICKEL", 2.15], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 500.00]])).to eq(735.55)
+  it "should total up some in cash register" do
+    expect(CashRegister.total_cash_register_sum(20.50, 50.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq(335.41)
   end
 end
 
-  describe 'ChangeNeeded' do
-    context 'subtracts cash amount from item price ' do
-      it 'should return correct customer change = 0.5' do
-        expect(CashRegister.ChangeNeeded(19.50, 20.00, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])).to eq(0.5)
-      end
-      it 'should return correct customer change = 29.5' do
-        expect(CashRegister.ChangeNeeded(19.50, 50.00, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])).to eq(30.5)
-      end
+describe 'ChangeNeeded' do
+  context 'subtracts cash amount from item price ' do
+    it 'should return correct customer change = 0.5' do
+      expect(CashRegister.change_needed(19.50, 20.00, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])).to eq(0.5)
+    end
+    it 'should return correct customer change = 29.5' do
+      expect(CashRegister.change_needed(19.50, 50.00, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])).to eq(30.5)
     end
   end
+end
 
-  describe 'getChange' do
-    context 'converts change to appropriate output' do
-      it 'should return correct output' do
-        expect(CashRegister.GetChange(100.25)).to eq( [["ONEHUNDRED ", 100.0], ["QUARTER ", 0.25]] )
-      end
-      it 'should return correct output' do
-        expect(CashRegister.GetChange(200.53)).to eq( [["ONEHUNDRED ", 200.0], ["QUARTER ", 0.5], ["PENNY ", 0.03]] )
-      end
-      it 'should return correct output' do
-        expect(CashRegister.GetChange(96.74)).to eq( [["TWENTY ", 80.0], ["TEN ", 10.0], ["FIVE ", 5.0], ["ONE ", 1.0], ["QUARTER ", 0.5], ["DIME ", 0.2], ["PENNY ", 0.04]] )
-      end
+describe 'getChange' do
+  context 'converts change to appropriate output' do
+    it 'should return correct output' do
+      expect(CashRegister.get_change(100.25)).to eq( [["ONEHUNDRED ", 100.0], ["QUARTER ", 0.25]] )
+    end
+    it 'should return correct output' do
+      expect(CashRegister.get_change(200.53)).to eq( [["ONEHUNDRED ", 200.0], ["QUARTER ", 0.5], ["PENNY ", 0.03]] )
     end
   end
+end
 
-  describe 'checkCashRegister' do
-    context 'returns appropriate status' do
-      it "should return Insuficient Funds if change due is greater than change available" do
-        expect(CashRegister.checkCashRegister(19.50, 20.00, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])).to eq('Insuficient Funds')
-      end
-      it "should return Closed if change due is equal to change available" do
-        expect(CashRegister.checkCashRegister(19.50, 19.51, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])).to eq('Closed')
-      end
-      it "should return amount if change available is greater than change due" do
-        expect(CashRegister.checkCashRegister(19.50, 20.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq( [["QUARTER ", 0.5]] )
-      end
-      it "should return amount if change available is greater than change due" do
-        expect(CashRegister.checkCashRegister(20.50, 50.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq( [["TWENTY ", 20.0], ["FIVE ", 5.0], ["ONE ", 4.0], ["QUARTER ", 0.5]] )
-      end
-      it "should correct change when paying one hundred for three dollars and twenty six cents" do
-        expect(CashRegister.checkCashRegister(3.26, 100.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq([["TWENTY", 60], ["TEN", 20], ["FIVE", 15], ["ONE", 1], ["QUARTER", 0.5], ["DIME", 0.2], ["PENNY", 0.04]])
-      end
+describe 'checkCashRegister' do
+  context 'returns appropriate status' do
+    it "should return Insuficient Funds if change due is greater than change available" do
+      expect(CashRegister.check_cash_register(19.50, 20.00, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])).to eq('Insuficient Funds')
     end
-
+    it "should return Closed if change due is equal to change available" do
+      expect(CashRegister.check_cash_register(19.50, 19.51, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])).to eq('Closed')
+    end
+    it "should return amount if change available is greater than change due" do
+      expect(CashRegister.check_cash_register(19.50, 20.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq( [["QUARTER ", 0.5]] )
+    end
+    it "should return amount if change available is greater than change due" do
+      expect(CashRegister.check_cash_register(20.50, 50.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq( [["TWENTY ", 20.0], ["FIVE ", 5.0], ["ONE ", 4.0], ["QUARTER ", 0.5]] )
+    end
+    it "should correct change when paying one hundred for three dollars and twenty six cents" do
+      expect(CashRegister.check_cash_register(3.26, 100.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]])).to eq([["TWENTY", 60], ["TEN", 20], ["FIVE", 15], ["ONE", 1], ["QUARTER", 0.5], ["DIME", 0.2], ["PENNY", 0.04]])
+    end
+  end
 end
