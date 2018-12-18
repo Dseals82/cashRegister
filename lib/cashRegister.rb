@@ -16,7 +16,7 @@ class CashRegister
     total_up = cashInDrawer.reduce(0) { |sum, (name, number)| sum + number }.round(2)
     cid = cashInDrawer.reverse
     return "Closed" if change_from_purchase == total_up
-    return "Insuficient Funds" if change_from_purchase > total_up
+    
 
     output = {}
     self.get_change(change_from_purchase)
@@ -36,7 +36,8 @@ class CashRegister
       end
     end
 
-    return output.to_a if change_from_purchase < total_up
+    return output.to_a if change_from_purchase == 0
+    'Insuficient Funds'
   end
 
   private
