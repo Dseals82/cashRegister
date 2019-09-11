@@ -1,7 +1,6 @@
 
 class CashRegister
-  CASH_DICTIONARY = {
-                     "ONE HUNDRED" => 100,
+  CASH_DICTIONARY = {"ONE HUNDRED" => 100,
                      "TWENTY" => 20,
                      "TEN" => 10,
                      "FIVE" => 5,
@@ -14,53 +13,48 @@ class CashRegister
   def self.check_cash_register(price, cash, cashInDrawer)
     change_from_purchase = (cash - price).round(2)
     total_up = cashInDrawer.reduce(0) { |sum, (name, number)| sum + number }.round(2)
-    cid = cashInDrawer.reverse
     return "Closed" if change_from_purchase == total_up
-    
-
-    output = {}
+    cid = cashInDrawer.reverse
+    correct_output = {}
     self.get_change(change_from_purchase)
 
-    cid.each do |pair|
-      name_of_number = pair[0]
-      number = pair[1]
-      individual_value = CASH_DICTIONARY[name_of_number]
-      accumulated = 0
-
-      while (change_from_purchase >= individual_value && accumulated + individual_value <= number)
-        (output[name_of_number] ||= 0)
-        (output[name_of_number] += individual_value)
-        (change_from_purchase -= individual_value)
-        (change_from_purchase = change_from_purchase.round(2))
-        accumulated += individual_value
-      end
+    cid.each do |currency|
+      currency_type = currency[0]
+      currency_value = currency[1]
+      compared_value_type = CASH_DICTIONARY[currency_type]
+      accumulated_value = 0
+      change_from_purchase = correct_amount_given(accumulated_value, change_from_purchase,
+        compared_value_type, currency_type, currency_value, correct_output)
     end
 
-    return output.to_a if change_from_purchase == 0
-    'Insuficient Funds'
+    return correct_output.to_a if change_from_purchase == 0
+    'Insufficient Funds'
   end
 
   private
 
-  def self.total_cash_register_sum(price, cash, cashInDrawer)
-    cashInDrawer.reduce(0) { |sum, (name, number)| sum + number }.round(2)
+  def self.correct_amount_given(accumulated_value, change_from_purchase, compared_value_type, currency_type, currency_value, output)
+    until !(change_from_purchase >= compared_value_type && accumulated_value + compared_value_type <= currency_value)
+      (output[currency_type] ||= 0)
+      (output[currency_type] += compared_value_type)
+      (change_from_purchase -= compared_value_type)
+      (change_from_purchase = change_from_purchase.round(2))
+      (accumulated_value += compared_value_type)
+    end
+    change_from_purchase
   end
 
-  def self.change_needed(itemPrice, cashOnHand, cashInDrawer)
-    (cashOnHand - itemPrice).round(2)
-  end
-
-  def self.get_change(calculate)
-    output = {}
-    change = calculate
-    CASH_DICTIONARY.map do |nameOfNumber, number|
-      while change >= number
-        (output[nameOfNumber] ||= 0)
-        (output[nameOfNumber] += number)
-        (change -= number)
-        change = change.round(2)
+  def self.get_change(change_amount)
+    correctOutput = {}
+    change = change_amount
+    CASH_DICTIONARY.map do |currencyType, currencyValue|
+      while change >= currencyValue
+        (correctOutput[currencyType] ||= 0)
+        (correctOutput[currencyType] += currencyValue)
+        (change -= currencyValue)
+        (change = change.round(2))
       end
     end
-    output.to_a
+    correctOutput.to_a
   end
 end
